@@ -1,0 +1,4 @@
+# Optional geometry/energy helpers; core parsers and checkers use the standard library.
+numpy
+ase
+pymatgen

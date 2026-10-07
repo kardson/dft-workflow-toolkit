@@ -1,0 +1,134 @@
+{
+  "schema": "public-release-allowlist/v1",
+  "scope": "Generic workflow documentation and software only",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "a79691a93b46e49ce460c26ef22afcc03d6eca1e63bf2edbc20e96159510f6c9"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "bafbf2684902adb87a65eb10ddbf7b405874115d0fa3a26e72c1c49935cfe7d4"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "17dbae3e0db60d8f18cad8a92afbd4be61a562f1491baa0952d81f6489b4a765"
+    },
+    {
+      "path": "README.md",
+      "sha256": "557db5adf4faab12b4da1c18c894346eba40f59f605be943f2088f4eadf88578"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "sha256": "b7a8facbcde0d178a11f27695bb82e559ceb6980b516d75cc913217aed854750"
+    },
+    {
+      "path": "docs/private_workspace.md",
+      "sha256": "8027ea5f5e5f0dca65a45a05561fa3fff57bfb8f2e378a4f1398484fdc313161"
+    },
+    {
+      "path": "docs/publication_policy.md",
+      "sha256": "978f7c631498ec2ebde236590463447d3d495f033d0932b2483529a104df1af8"
+    },
+    {
+      "path": "docs/workflow.md",
+      "sha256": "16f2d0ddb5c900069308ee0a6f6c42089592e32c39e9ddfc60f8a8587b85d29d"
+    },
+    {
+      "path": "requirements-analysis.txt",
+      "sha256": "60adfd253ea3c86cec0877f62f561c0dce2f7fc245fc5541feeb85a4f7b994f5"
+    },
+    {
+      "path": "requirements-science.txt",
+      "sha256": "67189ed0ca5ef1a17027ece8730227f9a59bd13c4a36c78c37860e22eeda298d"
+    },
+    {
+      "path": "scripts/check_public_release.py",
+      "sha256": "8df76f782a410e6c443026552cdb10112a7f0d32aea5f50f355220dfe72ec87d"
+    },
+    {
+      "path": "templates/handoff.template.md",
+      "sha256": "e9492a4321fc9f2ec39b2e716082256a994fd8f8813b69b4c3d49e2a971b508f"
+    },
+    {
+      "path": "templates/task_record.template.json",
+      "sha256": "b6af4ed0b42365308c635f8162c621cb1d753ac7e9488c1f54a3d03218868c81"
+    },
+    {
+      "path": "tools/analysis_addons.py",
+      "sha256": "ff97178a173e24cedaa67d0833e12a758dcd0a1b99eff8c2bad9d697f2b52e41"
+    },
+    {
+      "path": "tools/job_watch.py",
+      "sha256": "ffdb697640fa66406fff7b0417f055d4b9178d4bb86f151caf3d065cf332492c"
+    },
+    {
+      "path": "tools/practical_geometry.py",
+      "sha256": "3140c2ed215e928bb561c4d3faa347d6a9a6c26e5271dfb7d3d988fbeb23bb00"
+    },
+    {
+      "path": "tools/progress_evidence.py",
+      "sha256": "9cf7a2d16b5cafb18ec324292fd2d2475b1a32224d22d2d0d5dbee70cc50fbb5"
+    },
+    {
+      "path": "tools/progress_snapshot.py",
+      "sha256": "3441e6090a1af0d77217526b8d524003f58f7bdcd1a97c80e733707f318a77e4"
+    },
+    {
+      "path": "tools/result_registry.py",
+      "sha256": "052638e840fe7da646cb794e200abf5732f2672184cfe49dd33baf01f7d5aa9e"
+    },
+    {
+      "path": "tools/scientific_helpers.py",
+      "sha256": "c137877c38c0dd808ac0455cceda22ed66172788ebe15518630bfa1eff61b8e7"
+    },
+    {
+      "path": "tools/static_delivery_builder.py",
+      "sha256": "d02f5e989390ffcfab0e38e78b69786d75381da21671bb45da18632cca58457b"
+    },
+    {
+      "path": "tools/static_delivery_check.py",
+      "sha256": "d7c80a69d90379929c3272eca0f76e13928dc9cac284aae60ad4a6ee190cf6de"
+    },
+    {
+      "path": "tools/static_delivery_templates.py",
+      "sha256": "ef72ef5c1fd260a3c6c90fc5e4be3f34784802e4cc839734f8d73eec64b27e2f"
+    },
+    {
+      "path": "tools/static_runtime_guard.py",
+      "sha256": "52fa2ed719d4ea16e56b1aeb8346119aec7258c02069475e37fb7af98f89a38c"
+    },
+    {
+      "path": "tools/test_job_watch.py",
+      "sha256": "4c08fc48855d59fd9fd9ff0667202287233b3ee48d0a805c8e3019e539710ceb"
+    },
+    {
+      "path": "tools/test_scientific_helpers.py",
+      "sha256": "b41c03e732f04d2e8ca320d9ef5059e26888b519334e9b0492c88d20c9662762"
+    },
+    {
+      "path": "tools/test_static_delivery_builder.py",
+      "sha256": "dfad17d5e6ed6924ac78dc4975cdda5e70a74b30a0b8a2e342bf836ff1b7d0c7"
+    },
+    {
+      "path": "tools/vasp_execution_state.py",
+      "sha256": "3c74c6cdaa00ca1ee3be3fe32093efca35835f975833436ece5fd5e8d58ef9fb"
+    },
+    {
+      "path": "tools/vasp_executor.py",
+      "sha256": "801cc28a23492a19f09bd10fc0b798d01d7a16e2fbbac25b476c51cd2146f0ce"
+    },
+    {
+      "path": "tools/vasp_input_generator.py",
+      "sha256": "4171c6e1252578176af97f3325077abd47fe32d7152e3bd6a41b452ed5a89b69"
+    },
+    {
+      "path": "tools/vasp_operations.py",
+      "sha256": "d5007db0df9545bf2138fcd47fc1c3d613404e4b1f6dda2e1e6ed2b513fd0fd9"
+    },
+    {
+      "path": "tools/workflow_check.py",
+      "sha256": "2ccb9b1792ecf151221229474903ed237993a975b28858301cb0e75e3a0aab52"
+    }
+  ]
+}

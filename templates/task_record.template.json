@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "backend": "VASP",
+  "task_id": null,
+  "status": "DRAFT",
+  "purpose": null,
+  "environment_id": null,
+  "method_spec_ref": null,
+  "runtime_record_ref": null,
+  "species_blocks": [],
+  "net_charge_e": null,
+  "expected_nelect": null,
+  "resources": {"mpi_ranks": null, "kpar": null, "ncore": null, "omp_num_threads": null},
+  "input_sha256": {"POSCAR": null, "INCAR": null, "KPOINTS": null},
+  "input_validation_ref": null,
+  "paw_validation_ref": null,
+  "acceptance_criteria_ref": null,
+  "stop_conditions_ref": null,
+  "approval": null,
+  "execution": null,
+  "return_evidence": null,
+  "decision": null
+}

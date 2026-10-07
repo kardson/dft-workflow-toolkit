@@ -1,0 +1,6 @@
+# Optional analysis only. Obtain MacroDensity separately if needed.
+-r requirements-science.txt
+matplotlib
+custodian
+py4vasp
+sumo
