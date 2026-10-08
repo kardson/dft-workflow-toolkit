@@ -1,14 +1,28 @@
-# Public toolkit instructions
+# Agent 使用指引
 
-This repository contains generic documentation and software only.
+先读 README.md，按用户指定任务选择工具。本文件只约束此通用工具库，不替代使用者私有工作区的规则或授权。
 
-- Keep scientific sources, manuscripts, ideas, structures, input/output files, results, and real workstation configurations in a separate private workspace.
-- Read only the files needed for the current change. Do not search users' private research directories to obtain examples.
-- Use synthetic fixtures for tests. Label them clearly; never turn private production cases into public examples by changing names alone.
-- Require explicit specifications for physical values, source geometry, species order, constraints, environment identity, and fresh/restart contracts.
-- Local preparation, remote submission, execution completion, convergence, and scientific acceptance are separate states.
-- Never include licensed potential datasets or copy commercial software into this repository.
-- Make related changes in functional batches. Run affected checks; reuse successful checks for unchanged content. Use hashes for package identity and concrete integrity concerns.
-- Remote operations, notifications, and publication require the user's authorization for the named action.
-- Before publishing, review the actual files, Git index, all outgoing history, and release manifest. Run `scripts/check_public_release.py` in this independent repository. A clean scan does not replace human confidentiality review.
-- Preserve existing files and other contributors' changes. Do not rewrite or import private repository history.
+## 开始任务
+
+- 确认目标、来源、批准规格、允许读写目录、验收与停止条件。只读任务不需要先建立完整计算流程。
+- 对规划、参数审阅与指标任务明确设置 DFT_WORKSPACE_ROOT，保证真实数据进入独立私有区。
+- 阅读目标工具的 --help、相关契约和合成测试。不要猜测参数、补造研究证据或套用测试数值。
+
+## 权限与科学判断
+
+- 本地准备、规划、审阅和诊断不代表提交授权或科学接受。
+- 提交、远端写入、传输、重启、自动修复和持续监控需要用户对具体范围的授权；已有授权持续有效。
+- 缺少方法、物种、约束、赝势环境、参照或 fresh/restart 选择时，请研究者裁决。
+- 优先实际输入与主输出，区分进程结束、收敛、证据完整和科学接受；缺失证据报告 UNKNOWN/PARTIAL。
+- 保留现有数据与未提交改动，不为统一格式清理、覆盖、切分或迁移研究文件。
+
+## 改进工具
+
+- 维护者修改维护源后生成发布；外部贡献者可以在自己的分支提交通用源码与合成测试改进。
+- 按风险运行相关测试，完成一批改动后检查 diff。输入与工具未变时复用成功验证。
+- 发布前检查公开套件、显式文件清单、依赖和保密边界；不要放宽守卫来绕过失败。
+- 所有真实研究内容、工作站配置、密钥、认证文件和授权软件数据都留在私有区。扫描通过不能代替内容审阅。
+
+## 交付
+
+说明完成的任务、实际输出路径、证据缺口、运行的验证、复用的结果与仍需研究者决定的事项。不得把候选计划表述为已批准或已运行的计算。

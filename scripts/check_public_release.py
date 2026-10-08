@@ -14,10 +14,11 @@ import subprocess
 import sys
 
 RULES = (
-    ('private_key', r'-----BEGIN (?:RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----'),
+    ('private_key', r'-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----'),
+    ('provider_token', r'\b(?:sk-(?:ant-)?[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|hf_[A-Za-z0-9]{25,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})'),
     ('github_token', r'\bgh[pousr]_[A-Za-z0-9]{20,}\b|\bgithub_pat_[A-Za-z0-9_]{30,}\b'),
     ('cloud_key', r'\b(?:AKIA|ASIA)[A-Z0-9]{16}\b'),
-    ('credential_assignment', r'''(?i)(?:password|api_key|access_token)\s*[=:]\s*["'][^"'\s]{8,}["']'''),
+    ('credential_assignment', r'''(?i)["']?(?:password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|secret[_-]?key)["']?\s*[=:]\s*["'][^"'\s]{8,}["']'''),
     ('private_network_address', r'\b(?:10\.(?:\d{1,3}\.){2}\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b'),
     ('personal_windows_path', r'(?i)[A-Z]:[/\\]Users[/\\][^\s"\'<>]+'),
     ('paper_identifier', r'(?i)\b10\.\d{4,9}/[^\s"\'<>]+|\barxiv:\s*\d{4}\.\d{4,5}\b'),

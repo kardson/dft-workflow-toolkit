@@ -22,23 +22,12 @@ def _new_output(path, source):
 
 def diagnose(source, output):
     """Read only the validated BRMIX detector; never invoke a corrector."""
-    from custodian.vasp.handlers import VaspErrorHandler
+    from diagnostic_taxonomy import diagnose_brmix
+
     source = Path(source).resolve()
-    missing = [name for name in ('INCAR', 'vasp.stdout') if not (source / name).is_file()]
     out = _new_output(output, source)
-    report = {'schema': 'vasp-readonly-diagnostic/v1', 'source': str(source),
-              'checks': ['brmix'], 'mode': 'CHECK_ONLY', 'missing': missing}
-    if missing:
-        report['state'] = 'INSUFFICIENT_EVIDENCE'
-    else:
-        lines = (source / 'vasp.stdout').read_text(encoding='utf-8', errors='replace').splitlines()
-        raw_hits = [{'line': i, 'text': line[:500]} for i, line in enumerate(lines, 1)
-                    if 'BRMIX:' in line.upper()]
-        handler = VaspErrorHandler(output_filename='vasp.stdout', errors_subset_to_catch=['brmix'])
-        caught = bool(handler.check(str(source)))
-        report.update(state='DETECTED' if caught else ('SUPPRESSED' if raw_hits else 'NO_WHITELIST_HIT'),
-                      raw_hits=raw_hits, custodian_detected=caught,
-                      suppression='Custodian did not classify this raw BRMIX line; check INCAR and upstream handler rules' if raw_hits and not caught else None)
+    report = diagnose_brmix(source)
+    report['schema'] = 'vasp-readonly-diagnostic/v1'
     (out / 'diagnostic.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     return report
 

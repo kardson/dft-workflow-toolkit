@@ -12,11 +12,11 @@
     },
     {
       "path": "AGENTS.md",
-      "sha256": "17dbae3e0db60d8f18cad8a92afbd4be61a562f1491baa0952d81f6489b4a765"
+      "sha256": "1a7639930eb4b119d3a35faf2fe67c3aa6db807b424593752c49a54090d1f345"
     },
     {
       "path": "README.md",
-      "sha256": "557db5adf4faab12b4da1c18c894346eba40f59f605be943f2088f4eadf88578"
+      "sha256": "8f1458595a2f297a88efe67d7894bd8f00b1977b5c6ee38c1157d284ef7a49f4"
     },
     {
       "path": "THIRD_PARTY.md",
@@ -44,7 +44,7 @@
     },
     {
       "path": "scripts/check_public_release.py",
-      "sha256": "8df76f782a410e6c443026552cdb10112a7f0d32aea5f50f355220dfe72ec87d"
+      "sha256": "3ca6b77d03360d356b432cb87756c135a2ee488029a4890c6a7fd301c76dc1a3"
     },
     {
       "path": "templates/handoff.template.md",
@@ -56,11 +56,23 @@
     },
     {
       "path": "tools/analysis_addons.py",
-      "sha256": "ff97178a173e24cedaa67d0833e12a758dcd0a1b99eff8c2bad9d697f2b52e41"
+      "sha256": "18736538020ef67666363af6a073a448a3565f58e6a0cfa97d3c12cdca83bc2a"
+    },
+    {
+      "path": "tools/approved_bundle.py",
+      "sha256": "9ab4a50bc57075d8ff549f781aab122f0a4993a94a6255ec376eb3add012a93c"
+    },
+    {
+      "path": "tools/diagnostic_taxonomy.py",
+      "sha256": "cbef6e1e82e04d548ffe4edb687f3e5bf2c883bf8264bca7245e4a41602dac78"
     },
     {
       "path": "tools/job_watch.py",
       "sha256": "ffdb697640fa66406fff7b0417f055d4b9178d4bb86f151caf3d065cf332492c"
+    },
+    {
+      "path": "tools/parameter_advice.py",
+      "sha256": "380b77ab7e59e1ec39ff1aa7358349fbc1b5fc76cc8c233c06fe4371398288a8"
     },
     {
       "path": "tools/practical_geometry.py",
@@ -73,6 +85,10 @@
     {
       "path": "tools/progress_snapshot.py",
       "sha256": "3441e6090a1af0d77217526b8d524003f58f7bdcd1a97c80e733707f318a77e4"
+    },
+    {
+      "path": "tools/property_plan.py",
+      "sha256": "a74282e11c22a666f4f8c9d2f21a8914c86c384ccce948d5e268ec23e293028b"
     },
     {
       "path": "tools/result_registry.py",
@@ -103,12 +119,28 @@
       "sha256": "4c08fc48855d59fd9fd9ff0667202287233b3ee48d0a805c8e3019e539710ceb"
     },
     {
+      "path": "tools/test_parameter_advice.py",
+      "sha256": "24f3d107b3e52cf16c2d8014e14f310ba317ef22b0c5cb45763fbf088221a5e3"
+    },
+    {
+      "path": "tools/test_property_plan.py",
+      "sha256": "4a09118a7105c314eeaf6392e80b225ba90e7d7c9c03c22834c8a74c19b0d67e"
+    },
+    {
       "path": "tools/test_scientific_helpers.py",
       "sha256": "b41c03e732f04d2e8ca320d9ef5059e26888b519334e9b0492c88d20c9662762"
     },
     {
       "path": "tools/test_static_delivery_builder.py",
       "sha256": "dfad17d5e6ed6924ac78dc4975cdda5e70a74b30a0b8a2e342bf836ff1b7d0c7"
+    },
+    {
+      "path": "tools/test_workflow_metrics.py",
+      "sha256": "9c83c4fa234b22ac708c9c2c2c55b46d877aa193ab222090d107b2b1e64de2fb"
+    },
+    {
+      "path": "tools/tool_evidence.py",
+      "sha256": "e6c0775cc2fd9c6a06e45530080b3c54f9f4c7fa0cb0a63213e82fc0f5ae5616"
     },
     {
       "path": "tools/vasp_execution_state.py",
@@ -129,6 +161,10 @@
     {
       "path": "tools/workflow_check.py",
       "sha256": "2ccb9b1792ecf151221229474903ed237993a975b28858301cb0e75e3a0aab52"
+    },
+    {
+      "path": "tools/workflow_metrics.py",
+      "sha256": "77f09cb09c9e32726ae533057d0a1fa7e973132919028837d6d611b3a62d7d17"
     }
   ]
 }
