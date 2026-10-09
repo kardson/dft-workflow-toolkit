@@ -1,0 +1,27 @@
+{
+  "schema": "vasp-property-request/v1",
+  "request_id": "synthetic-first-plan",
+  "purpose": "Synthetic onboarding example; intentionally lacks scientific contracts; no calculation",
+  "case_budget": 1,
+  "stop_condition": "Stop after local plan and rejection check; no calculation.",
+  "stages": [
+    {
+      "stage_id": "static-a",
+      "case_id": "synthetic-a",
+      "property": "STATIC_ENERGY",
+      "template": "static",
+      "bundle_ref": null,
+      "depends_on": [],
+      "parents": [],
+      "required_artifacts": [
+        "OUTCAR"
+      ],
+      "contract_refs": {},
+      "contract_identities": {},
+      "required_acceptance_scope": "COMPLETE_RESULT",
+      "produce": [
+        "OUTCAR"
+      ]
+    }
+  ]
+}

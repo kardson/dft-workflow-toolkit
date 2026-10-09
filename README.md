@@ -46,6 +46,22 @@ Linux/macOS 完整套件、全部可选分析功能、其它 VASP/Python/依赖�
 
 ## 第一次使用
 
+首次本地试用可直接复制 [完整合成规划请求](examples/synthetic-property-request.json)，无需从测试代码猜字段。它故意缺少科学合同，预期退出码为 0、结果为 `BLOCKED`、10 项证据缺口，且执行授权和 gate 均为 false；不会生成 VASP 输入。
+
+从工具库根目录运行以下 PowerShell 示例，工作区在旁边新建，已有目录即停止：
+
+```powershell
+$toolkitRoot = (Get-Location).Path
+$trialWorkspace = Join-Path (Split-Path $toolkitRoot -Parent) 'synthetic-first-plan'
+if (Test-Path -LiteralPath $trialWorkspace) { throw '请选择新目录，保留已有工作' }
+New-Item -ItemType Directory -Path $trialWorkspace | Out-Null
+Copy-Item -LiteralPath (Join-Path $toolkitRoot 'examples/synthetic-property-request.json') -Destination (Join-Path $trialWorkspace 'request.json')
+$env:DFT_WORKSPACE_ROOT = $trialWorkspace
+python -B (Join-Path $toolkitRoot 'tools/property_plan.py') --request (Join-Path $trialWorkspace 'request.json') --output-dir (Join-Path $trialWorkspace 'plan')
+```
+
+查看 `plan/property_plan.json`、`plan/blockers.json` 和 `plan/dependency_table.csv`。`BLOCKED` 表示需要补实际批准的来源与证据；不要删除 blocker 或把合成合同当成研究批准。真实使用仍需下面的任务交接和私有工作区约束。
+
 1. 将本仓库克隆到工具目录，准备 Python 3.10 或更新版本。
 2. 阅读本页和 [AGENTS.md](AGENTS.md)，再按任务阅读 [协作流程](docs/workflow.md)。
 3. 为真实研究建立独立私有工作区，明确来源、目标、允许动作和停止条件。
@@ -177,3 +193,4 @@ python -B scripts/check_public_release.py --require-repository
 诊断支持范围见 [逐例验证与缺口记录](docs/diagnostic-validation-scope.json)。真实非命中、XML 解析观察与独立合成分支分开记录；合成阳性不能解除真实样本门槛。当前默认 BRMIX 不变，新检测器未启用，不报告总体准确率。
 
 工作流计量字段和缺失规则见 [观察合同](docs/workflow-observation-contract.json)。墙钟、人操作时间、首次通过与机械返工分开；未测量保留空值，历史启动快照不能当作当前任务完成。没有同类可比组时不报告改善率。内部合成试用不等于外部首次使用者或节时验证。
+

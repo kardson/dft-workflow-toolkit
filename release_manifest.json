@@ -16,7 +16,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "d5d8631b33ecb5d9297f512218dfa821958ee424a20854285142833d03e167f9"
+      "sha256": "7f0921199022f4cad137bc935ef9e77e53b430a9b7638a03958cbf61983ffe82"
     },
     {
       "path": "THIRD_PARTY.md",
@@ -57,6 +57,10 @@
     {
       "path": "docs/workflow.md",
       "sha256": "16f2d0ddb5c900069308ee0a6f6c42089592e32c39e9ddfc60f8a8587b85d29d"
+    },
+    {
+      "path": "examples/synthetic-property-request.json",
+      "sha256": "9b69e2d5e433ff0e3865a887a796763aa85e0afb40a086f6ea0ea1ccd08d7902"
     },
     {
       "path": "requirements-analysis.txt",
