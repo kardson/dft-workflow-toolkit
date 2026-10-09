@@ -1,0 +1,4 @@
+numpy==2.5.3
+ase==3.29.0
+pymatgen==2026.9.24
+pymatgen-core==2026.9.23

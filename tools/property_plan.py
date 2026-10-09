@@ -287,7 +287,13 @@ def _stage_blockers(stage):
     return support_state, sorted(set(blockers))
 
 
-def build_plan(request):
+def build_plan(request, *, evidence_manifest=None, evidence_receipt=None, source_root=None):
+    verification = None
+    if (evidence_manifest is None) != (evidence_receipt is None):
+        raise ValueError('Evidence manifest and receipt must be supplied together')
+    if evidence_manifest is not None:
+        from evidence_verifier import consume
+        verification = consume(evidence_manifest, evidence_receipt, source_root or PROJECT_ROOT, request, 'property-plan-request')
     request_id, purpose, stop_condition, budget, stages = _validate_request(request)
     ordered = _topological_order(stages)
     nodes = []
@@ -319,7 +325,7 @@ def build_plan(request):
                           "source_ref": parent["evidence_ref"], "execution_id": parent["execution_id"],
                           "case_id": parent["case_id"], "attempt": parent["attempt"],
                           "status": parent["evidence_state"]})
-    return {
+    result = {
         "schema": PLAN_SCHEMA,
         "request_id": request_id,
         "purpose": purpose,
@@ -342,6 +348,9 @@ def build_plan(request):
             "UNVALIDATED templates and unsupported properties stay data-gated; missing restart evidence never becomes fresh.",
         ],
     }
+    if verification is not None:
+        result['objective_evidence_verification'] = verification
+    return result
 
 
 def _resolve_request(path):
@@ -394,12 +403,14 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--request", required=True, help=f"Explicit {REQUEST_SCHEMA} JSON")
     parser.add_argument("--output-dir", required=True, help="New workspace-local plan output directory")
+    parser.add_argument('--evidence-manifest', help='Explicit workspace-local verifier manifest (opt-in)')
+    parser.add_argument('--evidence-receipt', help='Matching fresh verifier receipt (opt-in)')
     args = parser.parse_args(argv)
     try:
         request_path = _resolve_request(args.request)
         request = json.loads(request_path.read_text(encoding="utf-8-sig"))
         output_dir = _resolve_output(args.output_dir)
-        plan = build_plan(request)
+        plan = build_plan(request, evidence_manifest=args.evidence_manifest, evidence_receipt=args.evidence_receipt)
         plan["request_ref"] = request_path.relative_to(PROJECT_ROOT).as_posix()
         output = _write_outputs(plan, output_dir)
     except (OSError, ValueError, json.JSONDecodeError) as error:

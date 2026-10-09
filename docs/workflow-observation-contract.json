@@ -1,0 +1,28 @@
+{
+  "schema": "workflow-observation-contract/v1",
+  "definition_version": "o6-workflow-observation/v1",
+  "groups": ["preparation", "startup", "analysis"],
+  "identity_required_for_comparison": ["group", "template", "approved_input_identity", "environment", "delivery_or_analysis_scope", "tool_and_dependency_versions", "metric_definition", "attempt", "timestamp_provenance"],
+  "fields": {
+    "approved_to_delivery_wall_seconds": {"direction": "lower", "source": "Explicit approval and first effective scoped delivery timestamps", "missing": null},
+    "active_human_seconds": {"direction": "lower", "source": "Explicit human activity intervals only", "missing": null},
+    "mechanical_event_count": {"direction": "lower", "source": "Actual measured same-unit mechanical event references; scientific changes separate", "missing": null},
+    "first_pass": {"direction": "higher", "source": "Attempt-linked first reviewable delivery and review outcome; not package passed flag", "missing": null},
+    "handoff_count": {"direction": "lower", "source": "Explicit actual same-unit handoff events", "missing": null},
+    "preparation_wall_seconds": {"direction": "lower", "source": "Existing preparation receipt timer; not end-to-end workflow time", "missing": null}
+  },
+  "zero_baseline": "Relative improvement undefined/null; retain absolute difference only when matched",
+  "stopped_vs_failed": "Explicit STOPPED intent remains separate from FAILED; do not infer from unavailable completion",
+  "exclusions": "Missing identity/definition, mismatched group/scope, frozen backend provenance and unmeasured values stay outside applicable denominators",
+  "event_fields": ["unit", "attempt", "event_utc", "event_kind", "scope", "source_ref", "measurement_status"],
+  "next_observation": "Next already-authorized preparation or retrieval only; record from its actual start in existing receipt; no new task or background mechanism",
+  "internal_operator_trial": "INTERNAL_CROSS_ROLE_SYNTHETIC_TRIAL_ACCEPTED",
+  "engineering_observation_acceptance": "O6_ACCEPTED_ENGINEERING_OBSERVATION_LIMITED",
+  "internal_operator_trial_limits": "Existing internal management agent; not external independent or blind first-time trial. One usability demonstration, no efficiency claim; human time and improvement remain null.",
+  "external_first_operator_trial": "MISSING",
+  "comparable_pairs": 0,
+  "improvement_rate": null,
+  "efficiency_evidence": "EVIDENCE_INSUFFICIENT",
+  "scientific_acceptance": "NOT_EVALUATED",
+  "personal_paths_or_research_data_included": false
+}

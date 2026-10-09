@@ -164,8 +164,14 @@ def _review_comparison(contract, root):
     return output, blockers
 
 
-def review(bundle, proposal, *, bundle_ref, proposal_ref, source_root=None):
+def review(bundle, proposal, *, bundle_ref, proposal_ref, source_root=None, evidence_manifest=None, evidence_receipt=None):
     """Create a JSON-only review; values are not written back to the bundle."""
+    verification = None
+    if (evidence_manifest is None) != (evidence_receipt is None):
+        raise ValueError('Evidence manifest and receipt must be supplied together')
+    if evidence_manifest is not None:
+        from evidence_verifier import consume
+        verification = consume(evidence_manifest, evidence_receipt, source_root or PROJECT_ROOT, {'bundle':bundle,'proposal':proposal}, 'parameter-advice-inputs')
     if not isinstance(bundle, dict) or not isinstance(proposal, dict):
         raise ValueError("approved bundle and proposal roots must be objects")
     template = validate_bundle(bundle)
@@ -259,7 +265,7 @@ def review(bundle, proposal, *, bundle_ref, proposal_ref, source_root=None):
     comparison, comparison_blockers = _review_comparison(proposal.get("comparison_contract"), root)
     all_blockers.extend({"scope": "comparison_contract", "blocker": code} for code in sorted(set(comparison_blockers)))
     status = "INSUFFICIENT_ADVICE_EVIDENCE" if all_blockers else "REVIEWABLE_ADVICE_ONLY"
-    return {
+    result = {
         "schema": ADVICE_SCHEMA,
         "status": status,
         "proposal_id": proposal_id,
@@ -281,6 +287,9 @@ def review(bundle, proposal, *, bundle_ref, proposal_ref, source_root=None):
             "E0, F, TOTEN and MP-corrected entries remain distinct; no energy or acceptance conclusion is computed.",
         ],
     }
+    if verification is not None:
+        result['objective_evidence_verification'] = verification
+    return result
 
 
 def _resolve_input(path, label):
@@ -333,6 +342,8 @@ def main(argv=None):
     parser.add_argument("--approved-bundle", required=True, help="Explicit original vasp-approved-bundle/v1 JSON")
     parser.add_argument("--proposal", required=True, help=f"Explicit {PROPOSAL_SCHEMA} JSON")
     parser.add_argument("--output-dir", required=True, help="New workspace-local review directory")
+    parser.add_argument('--evidence-manifest', help='Explicit workspace-local verifier manifest (opt-in)')
+    parser.add_argument('--evidence-receipt', help='Matching fresh verifier receipt (opt-in)')
     args = parser.parse_args(argv)
     try:
         bundle_path = _resolve_input(args.approved_bundle, "approved-bundle")
@@ -344,6 +355,7 @@ def main(argv=None):
             bundle, proposal,
             bundle_ref=bundle_path.relative_to(PROJECT_ROOT).as_posix(),
             proposal_ref=proposal_path.relative_to(PROJECT_ROOT).as_posix(),
+            evidence_manifest=args.evidence_manifest, evidence_receipt=args.evidence_receipt,
         )
         output = _write_outputs(report, output_dir)
     except (OSError, ValueError, json.JSONDecodeError) as error:

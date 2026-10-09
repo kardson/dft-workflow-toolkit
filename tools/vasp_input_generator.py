@@ -23,12 +23,14 @@ from typing import Any, Mapping, Sequence
 try:
     from vasp_executor import (
         WARM_RESTART_MODE,
+        performance_diagnostic_spec_errors,
         validate_inputs,
         validate_restart_spec,
     )
 except ImportError:
     from .vasp_executor import (
         WARM_RESTART_MODE,
+        performance_diagnostic_spec_errors,
         validate_inputs,
         validate_restart_spec,
     )
@@ -39,38 +41,12 @@ INPUT_FILES = ("POSCAR", "INCAR", "KPOINTS")
 OPTIONAL_COPIED_FILES = ("atom_mapping.csv", "paw_identity.json")
 FEATURE_KEYS = ("external_field", "soc", "dispersion", "projection_output")
 
-# This is a renderer schema, not a second source of approved values.  Values
-# always come from the manifest supplied to generate_candidate().
-INCAR_FIELDS: tuple[tuple[str, str, str], ...] = (
-    ("PREC", "PREC", "text"),
-    ("ENCUT_eV", "ENCUT", "float"),
-    ("EDIFF_eV", "EDIFF", "float"),
-    ("ALGO", "ALGO", "text"),
-    ("NELM", "NELM", "int"),
-    ("NELMIN", "NELMIN", "int"),
-    ("ISMEAR", "ISMEAR", "int"),
-    ("SIGMA_eV", "SIGMA", "float"),
-    ("ISPIN", "ISPIN", "int"),
-    ("MAGMOM", "MAGMOM", "text"),
-    ("NUPDOWN", "NUPDOWN", "int"),
-    ("ISYM", "ISYM", "int"),
-    ("LREAL", "LREAL", "bool"),
-    ("LASPH", "LASPH", "bool"),
-    ("ADDGRID", "ADDGRID", "bool"),
-    ("NBANDS", "NBANDS", "int"),
-    ("ISTART", "ISTART", "int"),
-    ("ICHARG", "ICHARG", "int"),
-    ("IBRION", "IBRION", "int"),
-    ("POTIM", "POTIM", "float"),
-    ("NSW", "NSW", "int"),
-    ("ISIF", "ISIF", "int"),
-    ("EDIFFG_eV_per_A", "EDIFFG", "float"),
-    ("LDIPOL", "LDIPOL", "bool"),
-    ("IDIPOL", "IDIPOL", "int"),
-    ("DIPOL", "DIPOL", "vector"),
-    ("LWAVE", "LWAVE", "bool"),
-    ("LCHARG", "LCHARG", "bool"),
-)
+# Renderer and executor use one field contract; values still come from the manifest.
+try:
+    from vasp_contracts import INCAR_RENDER_FIELDS as INCAR_FIELDS
+except ImportError:
+    if not __package__: raise
+    from .vasp_contracts import INCAR_RENDER_FIELDS as INCAR_FIELDS
 INCAR_KEYS = frozenset(name for name, _, _ in INCAR_FIELDS) | {"SYSTEM"}
 REQUIRED_INCAR_KEYS = frozenset(name for name, _, _ in INCAR_FIELDS)
 PARALLEL_KEYS = frozenset({"mpi_ranks", "kpar", "ncore", "omp_num_threads"})
@@ -154,6 +130,12 @@ def _format_value(value: Any, kind: str) -> str:
         if type(value) is not bool:
             raise GeneratorError("INVALID_BOOLEAN_VALUE", "A boolean value was required.", value=value)
         return ".TRUE." if value else ".FALSE."
+    if kind == "lreal":
+        if type(value) is bool:
+            return ".TRUE." if value else ".FALSE."
+        if value == "Auto":
+            return "Auto"
+        raise GeneratorError("INVALID_LREAL_VALUE", "LREAL must be a boolean or the exact token Auto.", value=value)
     if kind == "vector":
         if (
             not isinstance(value, list)
@@ -242,6 +224,7 @@ def validate_spec(spec: Mapping[str, Any]) -> list[dict[str, Any]]:
         errors.append(_issue("INVALID_SCHEMA_VERSION", "schema_version must be an integer."))
     if not isinstance(spec.get("unit_id"), str) or not spec["unit_id"].strip():
         errors.append(_issue("MISSING_UNIT_ID", "unit_id must be a non-empty string."))
+    errors.extend(performance_diagnostic_spec_errors(spec))
 
     structure = spec.get("structure")
     if not isinstance(structure, dict):
@@ -343,6 +326,8 @@ def validate_spec(spec: Mapping[str, Any]) -> list[dict[str, Any]]:
             errors.append(_issue("INVALID_INCAR_SPEC_VALUE", f"INCAR field {name} must be an integer or null only for NUPDOWN.", key=name))
         elif kind == "bool" and type(value) is not bool:
             errors.append(_issue("INVALID_INCAR_SPEC_VALUE", f"INCAR field {name} must be boolean.", key=name))
+        elif kind == "lreal" and type(value) is not bool and value != "Auto":
+            errors.append(_issue("INVALID_INCAR_SPEC_VALUE", f"INCAR field {name} must be boolean or exact text Auto.", key=name))
         elif kind == "vector" and not _finite_vector(value, 3):
             errors.append(_issue("INVALID_INCAR_SPEC_VALUE", f"INCAR field {name} must be a finite three-number vector.", key=name))
     if "SYSTEM" in incar and (not isinstance(incar["SYSTEM"], str) or not incar["SYSTEM"].strip()):

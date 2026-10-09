@@ -1,0 +1,15 @@
+{
+  "schema": "diagnostic-validation-scope/v1",
+  "unit": "O5",
+  "runtime": {"python": "3.12.10", "platform": "Windows", "custodian": "2025.12.14"},
+  "default_checks": ["brmix"],
+  "new_detectors_enabled": false,
+  "state": "MATRIX_ENGINEERING_COMPLETE_REAL_SAMPLE_GATES_INCOMPLETE",
+  "real_observations": {"brmix_nonhit_samples": 2, "xml_eof_truncation_samples": 1, "xml_well_formed_samples": 1},
+  "synthetic_only": {"brmix_positive": "DETECTED", "explicit_nelect_suppression": "SUPPRESSED", "missing_incar": "INSUFFICIENT_EVIDENCE", "unreadable_stdout_mock": "INSUFFICIENT_EVIDENCE", "xml_well_formed": "COMPLETE_XML", "xml_eof_truncation": "END_TRUNCATED", "xml_general_syntax": "SYNTAX_ERROR", "xml_unreadable_mock": "READ_FAILURE"},
+  "missing_real": ["BRMIX positive", "BRMIX signature with explicit NELECT suppression", "BRMIX missing input", "BRMIX read failure", "XML general syntax error", "XML read failure"],
+  "limitations": ["Per-example observations only; no aggregate accuracy rate", "XML parser observations do not enable the proposed detector", "No whitelist hit does not mean healthy or converged", "Well-formed XML is not SCF or ionic convergence", "Read failures exercised by synthetic mocks only"],
+  "scientific_acceptance": "NOT_EVALUATED",
+  "accuracy_rate": null,
+  "personal_paths_or_research_snippets_included": false
+}

@@ -6,32 +6,43 @@
 
 ## 适用软件与版本
 
-当前公开版提供 **VASP 的输入、输出、交付与分析工具**，以及可复用的通用协作规则。未提供 CASTEP、Materials Studio 或 Quantum ESPRESSO 的专用输入生成器、输出解析器或运行后端；不能因为仓库名含 DFT 就把这些工具直接用于所有 DFT 软件。
+当前公开工具主要面向 **VASP**。通用协作规则可复用；CASTEP、Materials Studio 和 Quantum ESPRESSO 的专用输入/输出与运行后端尚未提供。
 
-| 软件或环境 | 版本依据 | 适用范围与验证状态 |
+| 软件 | 参照版本 | 证据与使用范围 |
 |---|---|---|
-| VASP | 开发源以 **6.5.1** 为参照 | 处理 POSCAR、INCAR、KPOINTS、OUTCAR、OSZICAR、XML/HDF5 等相关证据。公开发布通过合成测试；本次未重新运行真实 VASP。其他 VASP 版本须验证实际文件格式和输入契约，尚无逐版本兼容矩阵 |
-| VASPKIT | 开发源的集成参照为 **1.5.1** | 公开版可处理相关平均势数据；工作站专用调用后端未公开。安装它不是所有工具的运行前提，也不会自动获得可用远端配置 |
-| Python | 源码要求 **3.10+**；公开套件实际验证于 **3.12.14** | 3.10+ 是语法要求，不代表每个 Python 版本或第三方依赖组合均已测试 |
-| 操作系统 | 本次公开套件在 **Windows** 验证 | Linux/macOS 使用前需验证路径、外部命令与依赖。POSIX shell、SSH、MPI 或作业监督涉及的平台条件按具体工具另行准备 |
+| VASP | **6.5.1** | 开发环境配置参照；处理 VASP 输入、输出与结果证据，不等于其它版本已兼容 |
+| VASPKIT | **1.5.1** | 既有集成记录参照；公开工具不附工作站调用配置 |
 
-### 依赖版本记录
+Python 源码语法要求为 **3.10+**。这不代表所有解释器和第三方依赖组合均已验证。
 
-以下是维护者在本次发布时读取到的环境版本，供复现和排障参考。它们不是最低版本声明，也不是完整安装锁；`requirements-*.txt` 目前没有固定版本。
+### 已记录安装环境
 
-| 依赖 | 已记录版本 | 使用场景与证据 |
+科学工具环境 Python **3.12.14**；分析环境 Python **3.12.10**。下表由安装版本记录生成，不是最低版本声明或完整安装锁。
+
+| 包 | 科学工具环境 | 可选分析环境 |
 |---|---|---|
-| NumPy / ASE | **2.5.3 / 3.29.0** | 几何与科学辅助；属于本次公开合成测试环境 |
-| pymatgen / pymatgen-core | **2026.9.24 / 2026.9.23** | 结构与科学解析；属于本次公开合成测试环境 |
-| matplotlib | **3.11.2** | 按需绘图；已记录安装版本，不代表所有图形后端已验证 |
-| custodian | **2025.12.14** | 附加只读诊断；来自独立分析环境，本次未完整验证其全部诊断功能 |
-| py4vasp-core | **0.11.3** | HDF5 分析；来自独立分析环境。安装 `py4vasp` 时需核对实际 core 版本及数据要求 |
-| sumo | **3.0.0** | 按需 DOS 分析；来自独立分析环境，本次未完整验证其全部分析功能 |
-| MacroDensity | **3.1.0，源码构建** | 显式窗口的势平均分析；来自独立分析环境，需自行准备来源与验证 |
+| numpy | 2.5.3 | 2.5.3 |
+| ase | 3.29.0 | 3.29.0 |
+| pymatgen | 2026.9.24 | 2026.9.24 |
+| pymatgen-core | 2026.9.23 | 2026.9.23 |
+| matplotlib | 3.11.2 | 3.11.2 |
+| custodian | 未记录 | 2025.12.14 |
+| py4vasp | 未记录 | 未记录 |
+| py4vasp-core | 未记录 | 0.11.3 |
+| sumo | 未记录 | 3.0.0 |
+| MacroDensity | 未记录 | 3.1.0+source.a9b56cce |
 
-独立分析环境的 Python 为 **3.12.10**。记录“已安装”不等于该组合已通过公开版全部功能测试。几何和科学辅助按 `requirements-science.txt` 安装，附加分析按 `requirements-analysis.txt` 安装；只使用标准库工具时无需安装这些可选依赖。
+历史公开合成测试基线为 `563e1ec`：56 项，3 项平台相关跳过。此结果仅覆盖该提交的工具快照；本表的安装观察不自动成为新代码或全部分析功能的验收。
 
-VASP 可执行文件、授权赝势和第三方商业软件不随仓库分发。VASP 的使用许可由使用者自行取得；Python 包和其它工具遵循各自许可，见 [第三方说明](THIRD_PARTY.md)。
+公开快照 `3c6e990` 在干净 Python **3.12.14** 标准库环境中通过文件守卫、四个帮助入口及三个合成私有工作区 CLI 验证；没有安装科学或分析依赖，未生成计算输入或授权执行。此证据不覆盖 O2 新实现。
+
+本地 O2 工具候选（身份 `23eee01417f9`）通过公开合成套件 56 项（3 项平台相关跳过）；新增通用 CLI 的 4 项集成测试分别在科学依赖环境和 without-pip 标准库环境通过。覆盖能力目录、私有操作拒绝、工作区越界和缺失模块拒绝；不覆盖科学依赖的干净安装、实际 VASP 运行或全部分析功能。此记录是本地候选证据，不是远端发布记录。
+
+新的隔离科学环境在 **Windows / AMD64 / Python 3.12.14** 上完成安装与依赖检查：公开工具 53 项通过、3 项符号链接权限跳过，通用 CLI 4 项通过，Si/O 合成几何调用通过。只覆盖记录指定的工具快照及安装组合，不包含真实 VASP 计算。见 [机器可读兼容记录](docs/compatibility-clean-science.json) 和 [复现步骤](docs/reproduce-clean-science.md)。
+
+Linux/macOS 完整套件、全部可选分析功能、其它 VASP/Python/依赖版本及跳过的链接边界尚未验证。新增实际验证后，应更新兼容记录并重新生成本节。
+
+只用标准库工具时无需安装科学或分析依赖。按需使用 `requirements-science.txt`、`requirements-analysis.txt`；MacroDensity 的来源与构建需另行核对。VASP、授权赝势与工作站配置不随仓库提供。工具许可证尚未指定，第三方软件遵循各自许可，见 [第三方说明](THIRD_PARTY.md)。
 
 ## 第一次使用
 
@@ -58,6 +69,16 @@ python -m pip install -r requirements-science.txt
 
 ## 按任务选择入口
 
+通用校验入口为 `tools/vasp_core_cli.py`，与能力表共用命令目录。先查看帮助和当前安装闭包：
+
+```sh
+python -B tools/vasp_core_cli.py --help
+python -B tools/vasp_core_cli.py capabilities
+python -B tools/vasp_core_cli.py --workspace /path/to/private-workspace validate-bundle --bundle approved-bundle.json
+```
+
+该入口提供 `validate-bundle`、`preflight`、`postcheck`、`evidence`、`capabilities` 五种模式。文件参数必须在所选工作区内；默认拒绝私有批准配置及 `LREAL=Auto`。它不提供准备或提交计算的命令，校验通过也不构成执行授权。缺失模块的命令不会被能力表列为可用。其他分析与规划工具仍按下表独立调用。
+
 各工具独立运行，不需要原开发者的总入口或工作站配置。
 
 | 任务 | 入口 | 输出与边界 |
@@ -74,6 +95,7 @@ python -m pip install -r requirements-science.txt
 | 工具回执摘要 | `tools/tool_evidence.py` | 读取指定 JSON 回执，生成证据 sidecar |
 | 属性依赖规划 | `tools/property_plan.py` | 生成依赖计划和阻塞项，不生成计算输入或启动计算 |
 | 参数提案审阅 | `tools/parameter_advice.py` | 对照原批准契约检查变更，不自动接受提案 |
+| 显式 JSON 内容核验 | `tools/evidence_verifier.py` | 只比较清单指定字段，输出匹配与缺口；见[核验合同与合成试用](docs/evidence-verifier.md) |
 | 工作流观察指标 | `tools/workflow_metrics.py` | 只汇总显式列出的回执；缺少可比证据时不宣称提速 |
 | 管理记录检查 | `tools/workflow_check.py` | 当前限制 MPI-only、最多 64 ranks；源码锁检查不是通用依赖管理 |
 
@@ -86,7 +108,7 @@ python -B tools/parameter_advice.py --help
 python -B tools/workflow_metrics.py --help
 ```
 
-`approved_bundle.py` 是从维护源生成的契约校验函数，仅供参数审阅使用。公开版不包含工作站专用准备后端、总入口、能力目录或真实环境配置。
+`approved_bundle_validation.py` 是完整同源的契约校验模块，`approved_bundle.py` 是其公开薄入口。公开版包含五模式通用入口和能力目录；工作站专用准备后端、私有总入口和真实环境配置保留在私有项目。校验通过不授权准备或提交计算。
 
 ## 私有工作区与实际任务
 
@@ -115,6 +137,10 @@ python -B tools/workflow_metrics.py --observations /path/to/private-research/obs
 
 规划、审阅和指标输入分别使用 `vasp-property-request/v1`、`vasp-parameter-proposal/v1`、`vasp-workflow-observations/v1`。参数审阅还需要 `vasp-approved-bundle/v1`。合成测试展示这些契约的构造和拒绝样例；其中参数与数值只用于程序测试。输出目录必须是新的，保护性检查会拒绝计算目录或不允许的来源。
 
+规划和参数审阅可以同时指定 `--evidence-manifest` 与 `--evidence-receipt`，消费 `vasp-evidence-manifest/v1` 与 `vasp-evidence-verification/v1`。主体、清单或源内容变化使旧核验失效；核验只附加客观匹配，不改变原 blocker、建议状态、执行 gate 或科学授权。不提供成对选项时保持原默认行为。
+
+运行规划或参数审阅时，先切换到独立私有工作区，再用工具目录的完整路径调用脚本，并将 `DFT_WORKSPACE_ROOT` 设置为该私有工作区。CLI 的相对输入参数按当前目录解析；设置环境变量不会自动切换目录。也可以给输入参数使用工作区内的绝对路径。试用产生 `BLOCKED` 回执仍可表示程序正常完成：继续查看实际 blocker，不能把它改成执行批准。
+
 其他工具按各自 `--help` 接受明确路径，不能假定都支持上述环境变量。公开版远端示例根目录为 `/srv/dft/calculations/<batch>`；部署者须审阅适配自己的批准目录并验证拒绝行为。
 
 ## 让你的 agent 接手
@@ -129,8 +155,11 @@ python -B tools/workflow_metrics.py --observations /path/to/private-research/obs
 
 ```sh
 python -B -m unittest discover -s tools -p 'test_*.py'
+python -B -m unittest discover -s tests -p 'test_*.py'
 python -B scripts/check_public_release.py --require-repository
 ```
+
+`tools/` 包含工具与内容核验器的合成回归；`tests/` 包含通用 CLI 集成和独立诊断夹具消费测试。两组分别运行，不能只运行其中一组就宣称完整验证。具体计数与跳过原因以所验证工具快照的回执为准；诊断检查缺少指定可选依赖时会明确跳过。
 
 测试使用构造的数据，不运行 VASP 或连接工作站。修改时先运行受影响测试，发布前验证公开套件、依赖与内容边界。边界检查不是科学验收，也不能识别所有未发表的思想或未知格式的密钥。
 
@@ -144,3 +173,7 @@ python -B scripts/check_public_release.py --require-repository
 - [私有工作区结构](docs/private_workspace.md)
 - [公开边界与贡献要求](docs/publication_policy.md)
 - [依赖与第三方许可](THIRD_PARTY.md)
+
+诊断支持范围见 [逐例验证与缺口记录](docs/diagnostic-validation-scope.json)。真实非命中、XML 解析观察与独立合成分支分开记录；合成阳性不能解除真实样本门槛。当前默认 BRMIX 不变，新检测器未启用，不报告总体准确率。
+
+工作流计量字段和缺失规则见 [观察合同](docs/workflow-observation-contract.json)。墙钟、人操作时间、首次通过与机械返工分开；未测量保留空值，历史启动快照不能当作当前任务完成。没有同类可比组时不报告改善率。内部合成试用不等于外部首次使用者或节时验证。

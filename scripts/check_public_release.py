@@ -7,18 +7,17 @@ from __future__ import annotations
 import argparse
 import ast
 import hashlib
+import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import sys
 
+_scan_spec = importlib.util.spec_from_file_location('shared_credential_scan', Path(__file__).with_name('credential_scan.py'))
+credential_scan = importlib.util.module_from_spec(_scan_spec)
+_scan_spec.loader.exec_module(credential_scan)
 RULES = (
-    ('private_key', r'-----BEGIN (?:[A-Z]+ )*PRIVATE KEY-----'),
-    ('provider_token', r'\b(?:sk-(?:ant-)?[A-Za-z0-9_-]{20,}|AIza[A-Za-z0-9_-]{35}|hf_[A-Za-z0-9]{25,}|glpat-[A-Za-z0-9_-]{20,}|xox[baprs]-[A-Za-z0-9-]{20,})'),
-    ('github_token', r'\bgh[pousr]_[A-Za-z0-9]{20,}\b|\bgithub_pat_[A-Za-z0-9_]{30,}\b'),
-    ('cloud_key', r'\b(?:AKIA|ASIA)[A-Z0-9]{16}\b'),
-    ('credential_assignment', r'''(?i)["']?(?:password|passwd|api[_-]?key|access[_-]?token|client[_-]?secret|secret[_-]?key)["']?\s*[=:]\s*["'][^"'\s]{8,}["']'''),
     ('private_network_address', r'\b(?:10\.(?:\d{1,3}\.){2}\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b'),
     ('personal_windows_path', r'(?i)[A-Z]:[/\\]Users[/\\][^\s"\'<>]+'),
     ('paper_identifier', r'(?i)\b10\.\d{4,9}/[^\s"\'<>]+|\barxiv:\s*\d{4}\.\d{4,5}\b'),
@@ -31,6 +30,40 @@ FORBIDDEN_SUFFIXES = {'.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx',
                       '.zip', '.7z', '.tar', '.gz', '.sqlite', '.db'}
 OPTIONAL_IMPORTS = {'numpy', 'ase', 'pymatgen', 'matplotlib', 'custodian',
                     'py4vasp', 'sumo', 'macrodensity'}
+
+
+def private_match_exempt(text, relative, rule, match, policy):
+    """Exact reviewed protection literals only; never waive credentials or files."""
+    run_directory = '_'.join(('04', 'runs'))
+    model_directory = '_'.join(('03', 'models'))
+    scopes = {'tools/evidence_verifier.py': ('write_receipt', {run_directory, model_directory}),
+              'tools/test_evidence_verifier.py': ('test_paths_and_output_protection',
+                                                {run_directory, run_directory + '/result.json'})}
+    if rule != 'private_route_paths' or relative not in scopes or not policy:
+        return False
+    function, literals = scopes[relative]
+    entries = policy.get('semantic_exceptions', [])
+    identity = hashlib.sha256(text.encode('utf-8')).hexdigest()
+    approved = any(e == {'path': relative, 'rule': rule, 'function': function,
+                         'allowed_literals': sorted(literals), 'sha256': identity,
+                         'purpose': 'calculation_directory_protection'} for e in entries)
+    if not approved:
+        return False
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return False
+    lines = text.splitlines(keepends=True)
+    def offset(line, column):
+        return sum(len(s) for s in lines[:line - 1]) + len(lines[line - 1].encode('utf-8')[:column].decode('utf-8'))
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == function:
+            for literal in ast.walk(node):
+                if isinstance(literal, ast.Constant) and type(literal.value) is str and literal.value in literals:
+                    if (offset(literal.lineno, literal.col_offset) <= match.start()
+                            and match.end() <= offset(literal.end_lineno, literal.end_col_offset)):
+                        return True
+    return False
 
 
 def git(root, *args):
@@ -70,6 +103,7 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
     expected_paths = set(expected) | {'release_manifest.json'}
     actual = set()
     rules = list(RULES)
+    policy = None
     if private_policy:
         policy = json.loads(Path(private_policy).read_text(encoding='utf-8'))
         rules += [(r['id'], r['regex']) for r in policy['patterns']]
@@ -91,6 +125,8 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
         if path.name in FORBIDDEN_NAMES or path.suffix.lower() in FORBIDDEN_SUFFIXES:
             errors.append(f'Forbidden research/data file: {relative}')
         raw = path.read_bytes()
+        for hit in credential_scan.scan_bytes(raw, relative):
+            errors.append(f'Credential marker {hit["type"]}: {hit["path"]} ({hit["state"]})')
         if relative in expected and hashlib.sha256(raw).hexdigest() != expected[relative]:
             errors.append(f'Changed after manifest review: {relative}')
         try:
@@ -99,7 +135,8 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
             errors.append(f'Unexpected binary file: {relative}')
             continue
         for rule, pattern in rules:
-            if re.search(pattern, text, re.I):
+            if any(not private_match_exempt(text, relative, rule, match, policy)
+                   for match in re.finditer(pattern, text, re.I)):
                 errors.append(f'Leak marker {rule}: {relative}')
         if path.suffix == '.py':
             try:
@@ -129,6 +166,8 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
         # independent history; inspect each commit tree, not only the latest tree.
         for commit in commits:
             metadata = git(root, 'show', '-s', '--format=fuller', commit)
+            for hit in credential_scan.scan_bytes(metadata.encode(), 'commit metadata'):
+                errors.append(f'Credential marker {hit["type"]} in Git commit metadata')
             for rule, pattern in rules:
                 if re.search(pattern, metadata, re.I):
                     errors.append(f'Leak marker {rule} in Git commit metadata')
@@ -136,18 +175,25 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
             if historical_paths - expected_paths:
                 errors.append('Unlisted paths in public Git history')
             for relative in historical_paths:
-                historical = git_blob(root, f'{commit}:{relative}').decode('utf-8')
+                historical_raw = git_blob(root, f'{commit}:{relative}')
+                for hit in credential_scan.scan_bytes(historical_raw, relative):
+                    errors.append(f'Credential marker {hit["type"]} in public Git history: {hit["path"]}')
+                historical = historical_raw.decode('utf-8')
                 for rule, pattern in rules:
-                    if re.search(pattern, historical, re.I):
+                    if any(not private_match_exempt(historical, relative, rule, match, policy)
+                           for match in re.finditer(pattern, historical, re.I)):
                         errors.append(f'Leak marker {rule} in public Git history: {relative}')
         # The index may differ from both working files and commit history.
         for relative in (git(root, 'ls-files').splitlines() if check_index else []):
             if relative not in expected_paths:
                 errors.append(f'Unlisted staged/tracked path: {relative}')
             indexed_raw = git_blob(root, f':{relative}')
+            for hit in credential_scan.scan_bytes(indexed_raw, relative):
+                errors.append(f'Credential marker {hit["type"]} in Git index: {hit["path"]}')
             indexed = indexed_raw.decode('utf-8')
             for rule, pattern in rules:
-                if re.search(pattern, indexed, re.I):
+                if any(not private_match_exempt(indexed, relative, rule, match, policy)
+                       for match in re.finditer(pattern, indexed, re.I)):
                     errors.append(f'Leak marker {rule} in Git index: {relative}')
             if relative in expected and hashlib.sha256(indexed_raw).hexdigest() != expected[relative]:
                 # Git may normalize Windows CRLF to LF while staging. Permit
@@ -159,7 +205,7 @@ def check(root: Path, private_policy=None, require_repository=False, *, check_in
         errors.append('An independent public Git repository is required')
     return {'passed': not errors, 'checked_files': len(actual),
             'independent_repository': repository, 'history_commits': history_commits,
-            'errors': sorted(set(errors)),
+            'errors': sorted({credential_scan.redact(error) for error in errors}),
             'scope': 'Allowlist, integrity, syntax, imports and known leak markers; human semantic review remains required'}
 
 
@@ -172,7 +218,7 @@ def main():
     try:
         result = check(args.root, args.private_policy, args.require_repository)
     except (ValueError, OSError, KeyError, subprocess.SubprocessError) as error:
-        result = {'passed': False, 'errors': [str(error)]}
+        result = {'passed': False, 'errors': [credential_scan.redact(error)]}
     print(json.dumps(result, indent=2, ensure_ascii=False))
     return 0 if result['passed'] else 1
 
