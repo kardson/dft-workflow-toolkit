@@ -194,3 +194,5 @@ python -B scripts/check_public_release.py --require-repository
 
 工作流计量字段和缺失规则见 [观察合同](docs/workflow-observation-contract.json)。墙钟、人操作时间、首次通过与机械返工分开；未测量保留空值，历史启动快照不能当作当前任务完成。没有同类可比组时不报告改善率。内部合成试用不等于外部首次使用者或节时验证。
 
+
+补充证据见 [独立 agent 试用与合成配对范围](docs/workflow-evidence-supplement.json) 和 [真实诊断观察补查](docs/diagnostic-validation-supplement.json)。五组合成配对结果一致，约1%耗时差不足以排除噪声，不证明科研节时；真实阳性、抑制与读取失败证据仍缺，检测器门槛保持。

@@ -16,7 +16,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "7f0921199022f4cad137bc935ef9e77e53b430a9b7638a03958cbf61983ffe82"
+      "sha256": "bafe4361b5433eb3489a1a9599704ade01b52ceff8c56f425a77272500242bd7"
     },
     {
       "path": "THIRD_PARTY.md",
@@ -35,6 +35,10 @@
       "sha256": "a79861e641641ed2697fd29a41df8a1025b9c67d1f0e4262b4eb214ff1188682"
     },
     {
+      "path": "docs/diagnostic-validation-supplement.json",
+      "sha256": "d2a8c554437be1ac05d2c284df674a68aad02d78d839678da320c6bb1ca14b76"
+    },
+    {
       "path": "docs/evidence-verifier.md",
       "sha256": "73dfd24950f21ba443592211c7fd0659bf6a08b5753d66f34288695efc2964a4"
     },
@@ -49,6 +53,10 @@
     {
       "path": "docs/reproduce-clean-science.md",
       "sha256": "ed51c2cf754240ce0dfa3f75e73eeb415bcea69d4d4815ef8ba39fd9f14b82ee"
+    },
+    {
+      "path": "docs/workflow-evidence-supplement.json",
+      "sha256": "21c93dafcef1da8b72099d059d4ffa6abf5dc16d18031b390061866d65fa1f6d"
     },
     {
       "path": "docs/workflow-observation-contract.json",

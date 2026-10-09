@@ -1,0 +1,14 @@
+{
+  "schema": "diagnostic-validation-supplement/v1",
+  "unit": "O5",
+  "custodian_version": "2025.12.14",
+  "supplement": {"brmix_real_nonhit_added": 1, "xml_well_formed_added": 1, "real_archives_incomplete": 1},
+  "cumulative_scope": {"real_brmix_nonhits": 3, "real_brmix_positive": 0, "real_nelect_suppressions": 0, "runnable_missing_input": 0, "real_xml_complete": 2, "real_xml_eof_truncated": 1, "real_xml_syntax_errors": 0, "real_file_read_failures": 0},
+  "archive_missing_is_not_runtime_input_missing": true,
+  "additional_case_search": {"authorized_reports_read": 7, "within_scope_explicit_refs_to_missing_target_cases": 0, "additional_cases_opened": 0},
+  "default_checks": ["brmix"],
+  "new_detectors_enabled": false,
+  "overall_accuracy": null,
+  "scientific_acceptance": "NOT_EVALUATED",
+  "real_paths_or_snippets_included": false
+}

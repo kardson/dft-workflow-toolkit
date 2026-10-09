@@ -1,0 +1,32 @@
+{
+  "schema": "workflow-evidence-supplement/v1",
+  "independent_agent_trial": {
+    "state": "ACCEPTED_LIMITED_INDEPENDENT_CONTEXT_AGENT",
+    "public_materials_only": true,
+    "synthetic_success_exit": 0,
+    "missing_field_rejection_exit": 2,
+    "execution_authorized": false,
+    "external_human_trial": false,
+    "human_active_seconds": null
+  },
+  "synthetic_benchmark": {
+    "versions": {
+      "baseline": "3c6e990ab7deae95b0d09b07539325af271350b9",
+      "current": "b19a7a3f7291c1c186918c36421a4083bc223522"
+    },
+    "comparable_pairs": 5,
+    "primary_json_semantics_identical": true,
+    "median_baseline_seconds": 0.5381635999074206,
+    "median_current_seconds": 0.5330086001195014,
+    "relative_median_change": 0.009578871162609344,
+    "research_comparable_pairs": 0,
+    "efficiency_improvement_established": false,
+    "limitations": [
+      "5 short pairs; no statistical or general speedup claim",
+      "OS cache and runtime noise uncontrolled",
+      "no real research task comparison"
+    ]
+  },
+  "real_evidence": "See diagnostic-validation-supplement.json; missing real positives/suppression/failure evidence remains gated",
+  "personal_paths_or_research_content_included": false
+}
